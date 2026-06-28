@@ -35,6 +35,14 @@ def _arr(values: Iterable[float]) -> np.ndarray:
 
 
 TASKS: dict[str, MorphologyTask] = {
+    # Descriptor scalars are a 2D morphology fingerprint: scalar[0] = finger-1
+    # action sign/gain (resolves the T3 conflict), scalar[1] = finger-length
+    # scale (distinguishes the T2 variant). The two task pairs span the
+    # conflict spectrum: T1->T2 is medium-similarity / no-conflict (for the
+    # forward-transfer story); T1<->T3 is maximum conflict (for the forgetting
+    # story). T2 and T3 share the same morphology change relative to T1, so the
+    # only thing that differs is the sign flip -> isolates conflict as the cause
+    # of negative transfer.
     "T1": MorphologyTask(
         name="T1",
         mask=_arr([1.0, 1.0, 1.0]),
@@ -42,15 +50,21 @@ TASKS: dict[str, MorphologyTask] = {
         scalars=_arr([1.0, 1.0]),
         finger_lengths=_arr([1.0, 1.0, 1.0]),
     ),
+    "T2": MorphologyTask(
+        name="T2",
+        # 3-finger variant: shorter fingers (different reach), same action
+        # directions as T1 -> medium similarity, no conflict, should transfer.
+        mask=_arr([1.0, 1.0, 1.0]),
+        action_sign=_arr([1.0, 1.0, 1.0]),
+        scalars=_arr([1.0, 0.8]),
+        finger_lengths=_arr([0.8, 0.8, 0.8]),
+    ),
     "T3": MorphologyTask(
         name="T3",
         mask=_arr([1.0, 1.0, 0.0]),
         # Only finger 1 flips sign: finger 2 transfers from T1, so T3 stays
         # learnable from a T1 init while finger 1 is a genuine conflict.
         action_sign=_arr([-1.0, 1.0, 0.0]),
-        # Descriptor scalars expose the two active-finger signs, so the
-        # with-descriptor policy can resolve the conflict that the
-        # no-descriptor policy is forced into.
         scalars=_arr([-1.0, 1.0]),
         finger_lengths=_arr([1.0, 1.0, 0.0]),
     ),

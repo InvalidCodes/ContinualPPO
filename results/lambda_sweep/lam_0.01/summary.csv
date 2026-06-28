@@ -1,0 +1,4 @@
+method,use_morphology,stage,eval_task,success_mean,success_std,return_mean,return_std,seeds
+kl,False,after_T1,T1,1.0,0.0,17.42115312440522,1.2994936983057168,5
+kl,False,after_T3,T1,0.0,0.0,-0.1133583976420108,0.15167925521506848,5
+kl,False,after_T3,T3,1.0,0.0,18.075265682312654,0.7481928046504063,5

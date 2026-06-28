@@ -1,0 +1,3 @@
+method,use_morphology,task,auc_mean,auc_std,time_to_first_mean,time_to_0_8_mean,seeds
+multitask,False,joint,0.6765304369717529,0.09449982747764522,6.9,12.6,10
+multitask,True,joint,0.8445017182489032,0.09426117466672466,5.1,8.8,10
