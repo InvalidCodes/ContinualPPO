@@ -1,0 +1,13 @@
+method,use_morphology,stage,eval_task,success_mean,success_std,return_mean,return_std,seeds
+finetune,True,after_T1,T1,0.0,0.0,33.25375846242075,0.0,1
+finetune,True,after_T3,T1,0.0,0.0,27.525326143594175,0.0,1
+finetune,True,after_T3,T3,0.0,0.0,31.95404808494382,0.0,1
+kl,True,after_T1,T1,0.0,0.0,33.25375846242075,0.0,1
+kl,True,after_T3,T1,0.0,0.0,33.1833624147647,0.0,1
+kl,True,after_T3,T3,0.0,0.0,31.027368738707004,0.0,1
+multitask,True,after_joint,T1,0.0,0.0,33.66953719923647,0.0,1
+multitask,True,after_joint,T3,0.0,0.0,30.701079242638308,0.0,1
+reset,True,after_reset_T1,T1,0.0,0.0,33.25375846242075,0.0,1
+reset,True,after_reset_T3,T3,0.0,0.0,36.34408858420137,0.0,1
+single,True,after_T1,T1,0.0,0.0,33.25375846242075,0.0,1
+single,True,after_T3,T3,0.0,0.0,36.34408858420137,0.0,1

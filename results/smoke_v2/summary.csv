@@ -1,0 +1,7 @@
+method,use_morphology,stage,eval_task,success_mean,success_std,return_mean,return_std,seeds
+finetune,True,after_T1,T1,0.0,0.0,16.753064509272,0.0,1
+finetune,True,after_T3,T1,0.0,0.0,25.37451251652682,0.0,1
+finetune,True,after_T3,T3,0.0,0.0,7.952904821455426,0.0,1
+kl,True,after_T1,T1,0.0,0.0,16.753064509272,0.0,1
+kl,True,after_T3,T1,0.0,0.0,14.045911577954476,0.0,1
+kl,True,after_T3,T3,0.0,0.0,8.027550155272598,0.0,1

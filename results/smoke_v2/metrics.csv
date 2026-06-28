@@ -1,0 +1,7 @@
+method,use_morphology,seed,stage,eval_task,success_rate,return_mean,episode_length_mean
+finetune,True,0,after_T1,T1,0.0,16.753064509272,64.0
+finetune,True,0,after_T3,T1,0.0,25.37451251652682,64.0
+finetune,True,0,after_T3,T3,0.0,7.9529048214554265,64.0
+kl,True,0,after_T1,T1,0.0,16.753064509272,64.0
+kl,True,0,after_T3,T1,0.0,14.045911577954476,64.0
+kl,True,0,after_T3,T3,0.0,8.027550155272598,64.0

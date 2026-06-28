@@ -1,0 +1,13 @@
+method,use_morphology,seed,stage,eval_task,success_rate,return_mean,episode_length_mean
+single,True,0,after_T1,T1,0.0,33.25375846242075,64.0
+single,True,0,after_T3,T3,0.0,36.34408858420137,64.0
+multitask,True,0,after_joint,T1,0.0,33.66953719923647,64.0
+multitask,True,0,after_joint,T3,0.0,30.701079242638308,64.0
+finetune,True,0,after_T1,T1,0.0,33.25375846242075,64.0
+finetune,True,0,after_T3,T1,0.0,27.525326143594178,64.0
+finetune,True,0,after_T3,T3,0.0,31.95404808494382,64.0
+kl,True,0,after_T1,T1,0.0,33.25375846242075,64.0
+kl,True,0,after_T3,T1,0.0,33.1833624147647,64.0
+kl,True,0,after_T3,T3,0.0,31.027368738707004,64.0
+reset,True,0,after_reset_T1,T1,0.0,33.25375846242075,64.0
+reset,True,0,after_reset_T3,T3,0.0,36.34408858420137,64.0
