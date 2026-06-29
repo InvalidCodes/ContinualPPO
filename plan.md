@@ -325,7 +325,15 @@ T1↔T3 矩阵（success rate，5 seeds 均值±std）：
 
 结论四（multitask 不是干净上界，且 KL 在冲突下更可靠）：10 seeds + 2× 预算后，desc=1 的 multitask 仍只有 joint→T1 0.64±0.40 / T3 0.91±0.13——没有收紧到 1.0，均值不随预算/seed 改善，是内在限制不是噪声。原因：即使有 descriptor，单一共享网络要在相似观测上对 finger-1 输出相反动作，只能靠 descriptor 门控，小网络学不稳→seed 间干涉。对比之下 KL desc=1 是干净 1.0/1.0。⇒ 在冲突任务下，naive 联合训练自身被冲突拖累、不是干净天花板；KL（先练旧任务到位 + 蒸馏显式锚定）比 naive multitask 更可靠。措辞注意：不是「KL 超过理论上界」，而是「naive joint training 在冲突下退化」。desc=0 的 multitask 0.27/0.36 分裂如预期=真冲突（联合策略二选一只手）。在无冲突的 T1→T2 上，multitask 则干净达到 1.0/1.0——进一步印证退化只发生在冲突任务对。
 
-诚实定位：本 toy 现阶段 = ① anti-forgetting demo 成立（KL desc=1：1.0/1.0，5 seeds 零方差）；② descriptor 必要性的硬证据（λ 前沿无甜点）；③ plasticity 用 T1→T2 承载、实测正迁移（+0.30、12× 加速、不遗忘）；④ 冲突是遗忘与负迁移的根因（T2 vs T3 受控对照）。两个子目标各有合适的任务对，stability + plasticity 都有载体。
+结论五（集成验证：T1→T2→T3 三任务连续序列，desc=1，5 seeds）——这是把三任务放一条链上的统一矩阵，比两两独立实验更接近真实 continual 设定：
+   stage \ eval        T1            T2            T3
+   after T2  finetune  1.00          1.00          —      （良性步后无人遗忘）
+   after T3  finetune  0.60±0.55     0.60±0.55     0.62±0.52   （冲突步后三个全塌、双峰）
+   after T3  kl        1.00±0.00     1.00±0.00     0.93±0.16   （保两旧 + 学新）
+   after joint (mt)    0.75±0.43     0.72±0.44     0.92±0.12   （联合训练被冲突拖累）
+ 三个读数：① 良性步 T2 后无人遗忘（finetune 仍 1.00）→ 在一条链里证明「遗忘只发生在冲突步」；② KL 达成近乎完整的三任务持续学习（1.0/1.0/0.93），finetune 退化到 ~0.6；③ KL 再次 > naive multitask。诚实细节：KL 的 T3=0.93（非 1.0），随旧任务锚点累积（T1+T2），学新冲突任务略变难——stability-plasticity 张力随序列变长而显现，是后续长序列要盯的点。
+
+诚实定位：本 toy 现阶段 = ① anti-forgetting demo 成立（KL desc=1：1.0/1.0，5 seeds 零方差）；② descriptor 必要性的硬证据（λ 前沿无甜点）；③ plasticity 用 T1→T2 承载、实测正迁移（+0.30、12× 加速、不遗忘）；④ 冲突是遗忘与负迁移的根因（T2 vs T3 受控对照）；⑤ 集成 T1→T2→T3 上 KL 保两旧+学新（1.0/1.0/0.93），且优于 naive 联合训练。两个子目标各有合适的任务对，stability + plasticity 都有载体；结果目录分工见 results/README.md（sequence_t1t2t3 为集成 headline）。
 8. 参考公开 Repo（各取所需，不要照搬）
    Repo
  定位

@@ -24,32 +24,34 @@ def cell(df, **kw):
 
 
 def main() -> None:
-    stab = pd.read_csv(ROOT / "results/main_5seed/summary.csv")
-    stab = stab[stab.use_morphology == True]  # noqa: E712  (descriptor on = clean case)
+    seq = pd.read_csv(ROOT / "results/sequence_t1t2t3/summary.csv")
+    seq = seq[seq.use_morphology == True]  # noqa: E712  (descriptor on = clean case)
     plas_speed = pd.read_csv(ROOT / "results/plasticity_t1t2/learning_speed.csv")
     plas_speed = plas_speed[(plas_speed.use_morphology == True) & (plas_speed.task == "T2")]
 
     fig = plt.figure(figsize=(15, 6.0))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.0, 1.15], wspace=0.32)
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.05, 1.0, 1.15], wspace=0.32)
 
-    # --- Panel 1: STABILITY (T1<->T3, conflict pair) ---
+    # --- Panel 1: full T1->T2->T3 continual sequence (after T3, retain all) ---
     ax1 = fig.add_subplot(gs[0, 0])
-    methods = ["finetune", "kl"]
-    retain = [cell(stab, method=m, stage="after_T3", eval_task="T1")["success_mean"] for m in methods]
-    retain_sd = [cell(stab, method=m, stage="after_T3", eval_task="T1")["success_std"] for m in methods]
-    learn = [cell(stab, method=m, stage="after_T3", eval_task="T3")["success_mean"] for m in methods]
-    x = range(len(methods))
-    ax1.bar([i - 0.2 for i in x], retain, 0.4, yerr=retain_sd, capsize=4,
-            label="retain T1 (anti-forget)", color="#2563eb")
-    ax1.bar([i + 0.2 for i in x], learn, 0.4, label="learn T3 (new task)", color="#9ca3af")
+    tasks = ["T1", "T2", "T3"]
+    ft = [cell(seq, method="finetune", stage="after_T3", eval_task=t)["success_mean"] for t in tasks]
+    ft_sd = [cell(seq, method="finetune", stage="after_T3", eval_task=t)["success_std"] for t in tasks]
+    kl = [cell(seq, method="kl", stage="after_T3", eval_task=t)["success_mean"] for t in tasks]
+    kl_sd = [cell(seq, method="kl", stage="after_T3", eval_task=t)["success_std"] for t in tasks]
+    x = range(len(tasks))
+    ax1.bar([i - 0.2 for i in x], ft, 0.4, yerr=ft_sd, capsize=4, label="finetune", color="#9ca3af")
+    ax1.bar([i + 0.2 for i in x], kl, 0.4, yerr=kl_sd, capsize=4, label="KL distill", color="#2563eb")
     ax1.set_xticks(list(x))
-    ax1.set_xticklabels(["finetune", "KL distill"])
-    ax1.set_ylim(0, 1.08)
-    ax1.set_ylabel("success after T3 (5 seeds)")
-    ax1.set_title("STABILITY — T1↔T3 (max conflict)\nKL retains T1 where finetune forgets")
-    ax1.legend(fontsize=8, loc="lower center")
+    ax1.set_xticklabels(["T1\n(oldest)", "T2", "T3\n(newest)"])
+    ax1.set_ylim(0, 1.12)
+    ax1.set_ylabel("success after learning all of T1→T2→T3")
+    ax1.set_title("CONTINUAL SEQUENCE — T1→T2→T3\nKL retains both old tasks + learns new")
+    ax1.legend(fontsize=8, loc="lower left")
     ax1.grid(axis="y", alpha=0.25)
-    for i, v in enumerate(retain):
+    for i, v in enumerate(kl):
+        ax1.text(i + 0.2, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
+    for i, v in enumerate(ft):
         ax1.text(i - 0.2, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
 
     # --- Panel 2: PLASTICITY (T1->T2, similar pair) ---
@@ -88,9 +90,13 @@ def main() -> None:
         "   change itself (which transfers positively).\n"
         "\n"
         "VERDICT: KL distillation = successful CL here\n"
-        "  • anti-forget under conflict (T3): 1.0 vs 0.0\n"
-        "  • no plasticity cost when none (T2): ≈1.0\n"
-        "SCOPE: 2 task pairs; descriptor REQUIRED\n"
+        "  T1→T2→T3 sequence, after T3 (desc on):\n"
+        "    KL:       T1 1.00  T2 1.00  T3 0.93\n"
+        "    finetune: T1 0.60  T2 0.60  T3 0.62\n"
+        "    multitask:T1 0.75  T2 0.72  T3 0.92\n"
+        "  KL retains 2 old tasks + learns new, and\n"
+        "  beats naive joint training under conflict.\n"
+        "SCOPE: 3-task chain; descriptor REQUIRED\n"
         "  (necessity toy-specific; AE-entangled case\n"
         "   and other CL baselines untested)."
     )
